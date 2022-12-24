@@ -8,12 +8,14 @@ var userClickedPattern = [];
 
 var level = 0;
 
-var start = true;
+var start = false;
 
 $(document).keypress(function() {
-    if(start)
+    if(!start)
+    {
         nextSequence();
-    start = false;
+        start = true;
+    }
 });
 
 
@@ -26,52 +28,30 @@ $(".btn").click(function (){
     var ele = this;
     playSound(userChosenColour);
 
-    animatePress(ele);
-    var idx = userClickedPattern.length - 1;
-    if(userClickedPattern[idx] === gamePattern[idx])
-    {
-        if(idx+1 === gamePattern.length)
-            checkAnswer(idx);
-    }
-    else
-    {
-        playSound("wrong");
-        $("body").addClass("game-over");
-        $("#level-title").text("Game Over, Press Any Key to Restart");
-
-        setTimeout(function(){
-            $("body").removeClass("game-over");
-        },200);
-        startOver();
-    }
+    animatePress(userChosenColour);
+    checkAnswer(userClickedPattern.length-1);
 });
 
 function startOver()
 {
     gamePattern = [];
     level = 0;
-    start = true;
+    start = false;
 }
 
 
 function checkAnswer(index)
 {
-    var correct = true;
-    for(let i = 0; i<=index; i++)
-    {
-        if(gamePattern[i] !== userClickedPattern[i])
-        {
-            correct = false;
-            break;
-        }
-    }
 
-    if(correct)
+    if(gamePattern[index] === userClickedPattern[index])
     {
-        userClickedPattern = [];
-        setTimeout(function () {
-            nextSequence()
-        },1000);
+        if(gamePattern.length === userClickedPattern.length)
+        {
+        
+            setTimeout(function () {
+                nextSequence()
+            },1000);
+        }
     }
     else
     {
@@ -96,16 +76,17 @@ function playSound(element)
 
 function animatePress(ele)
 {
-    $(ele).addClass("pressed");
+    $("#" + ele).addClass("pressed");
 
     setTimeout(function(){
-        $(ele).removeClass("pressed");
+        $("#" + ele).removeClass("pressed");
     },100);
 }
 
 
 function nextSequence()
 {
+    userClickedPattern = [];
     var randomNumber = Math.floor(Math.random()*4);
 
 
